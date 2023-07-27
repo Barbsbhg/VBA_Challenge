@@ -1,0 +1,103 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2709
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww13080\viewh12980\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 Sub StockData()\
+\
+For Each WS In Worksheets\
+\
+'filter ticker\
+WS.Range("a:a").AdvancedFilter xlFilterCopy, , WS.Range("I1:I1"), True\
+\
+'name columns\
+WS.Range("J1").Value = "Yearly Change"\
+WS.Range("K1").Value = "Percent Change"\
+WS.Range("L1").Value = "Total Stock Volume"\
+WS.Range("O2").Value = "Greatest % Increase"\
+WS.Range("O3").Value = "Greatest % Decrease"\
+WS.Range("O4").Value = "Greatest Total Volume"\
+WS.Range("P1").Value = "Ticker"\
+WS.Range("Q1").Value = "Value"\
+\
+'declare variables\
+  Dim ticker As String\
+  Dim Vol_Total As Double\
+  Vol_Total = 0\
+  Dim Summary_Table_Row As Long\
+  Summary_Table_Row = 2\
+  Dim change As Double\
+  Dim openingprice As Double\
+  openingprice = WS.Cells(2, 3).Value\
+\
+'read through the rows to find aswers\
+\
+  For i = 2 To 22770\
+\
+'find total stock volume\
+    If WS.Cells(i + 1, 1).Value <> WS.Cells(i, 1).Value Then\
+\
+      ticker = WS.Cells(i, 1).Value\
+\
+     Vol_Total = Vol_Total + WS.Cells(i, 7).Value\
+\
+      WS.Range("L" & Summary_Table_Row).Value = Vol_Total\
+\
+      Vol_Total = 0\
+      \
+      'find yearly change and  %\
+    \
+      YearlyChange = change - openingprice\
+      change = WS.Cells(i, 6).Value - openingprice\
+      WS.Range("J" & Summary_Table_Row).Value = change\
+      \
+      WS.Range("K" & Summary_Table_Row).Value = change / openingprice\
+      Summary_Table_Row = Summary_Table_Row + 1\
+      openingprice = WS.Cells(i + 1, 3).Value\
+     WS.Range("K1:K1" & Summary_Table_Row).NumberFormat = "0.00%"\
+\
+     \
+\
+      'conditional formatting\
+      \
+If WS.Range("J" & Summary_Table_Row).Value > 0 Then\
+WS.Range("J" & Summary_Table_Row).Interior.ColorIndex = 4\
+ElseIf WS.Range("J" & Summary_Table_Row).Value < 0 Then\
+WS.Range("J" & Summary_Table_Row).Interior.ColorIndex = 3\
+    \
+    End If\
+      \
+    Else\
+\
+      Vol_Total = Vol_Total + WS.Cells(i, 7).Value\
+      \
+    End If\
+\
+  Next i\
+  \
+  'find max & min - i tried\
+  \
+'For i = 2 To 22770\
+'\
+'If WS.Cells(i, 11).Value = Application.WorksheetFunction.Max(Range("K:K")) Then\
+'WS.Cells(2, 16).Value = WS.Cells(i, 9).Value\
+'WS.Cells(2, 17).Value = WS.Cells(i, 11).Value\
+\
+'ElseIf ws.Cells(j, 10).Value = Application.WorksheetFunction.Min(Range("J:J")) Then\
+'ws.Cells(3, 16).Value = ws.Cells(j, 9).Value\
+'ws.Cells(3, 17).Value = ws.Cells(j, 11).Value\
+'\
+'ElseIf ws.Cells(j, 12).Value = Application.WorksheetFunction.Max(Range("L:L")) Then\
+'ws.Cells(4, 16).Value = ws.Cells(j, 9).Value\
+'ws.Cells(4, 17).Value = ws.Cells(j, 12).Value\
+\
+'End If\
+\
+Next WS\
+\
+End Sub\
+\
+\
+}
